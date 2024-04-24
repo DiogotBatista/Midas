@@ -1,0 +1,90 @@
+{% extends 'base.html' %}
+{% block title %}{% if object %}Editar Despesa{% else %}Criar Despesa{% endif %}{% endblock %}
+
+{% block content %}
+    <div class="container mt-1">
+        <h1 class="mb-4">{% if object %}Editar{% else %}Criar{% endif %} Despesa</h1>
+        <form method="post" class="needs-validation" novalidate>
+            {% csrf_token %}
+            <div class="row">
+                {% for field in form %}
+                    <div class="col-12 mb-3">
+                        <label for="{{ field.id_for_label }}" class="form-label">{{ field.label }}</label>
+                        {{ field }}
+                        {% if field.help_text %}
+                            <div class="form-text">{{ field.help_text }}</div>
+                        {% endif %}
+                        {% for error in field.errors %}
+                            <div class="invalid-feedback" style="display: block;">
+                                {{ error }}
+                            </div>
+                        {% endfor %}
+                    </div>
+                {% endfor %}
+
+            </div>
+            <button type="submit" class="btn btn-primary"><i class="fas fa-save"></i> Salvar</button>
+            <a href="{% if request.GET.next %}{{ request.GET.next }}{% else %}{% url 'despesa-list' %}{% endif %}"
+               class="btn btn-secondary"><i class="fas fa-times"></i> Cancelar</a>
+        </form>
+    </div>
+{% endblock %}
+
+
+{% block extra_js %}
+    <script type="text/javascript">
+        // Configuração AJAX para adicionar CSRF token em solicitações POST
+        $.ajaxSetup({
+            beforeSend: function (xhr, settings) {
+                if (!/^(GET|HEAD|OPTIONS|TRACE)$/.test(settings.type) && !this.crossDomain) {
+                    xhr.setRequestHeader("X-CSRFToken", "{{ csrf_token }}");
+                }
+            }
+        });
+
+        // AJAX para carregar subcategorias com base na categoria selecionada
+        $(document).ready(function () {
+            $('#id_categoria').change(function () {
+                var categoriaId = $(this).val();
+                var url = '{% url "subcategorias_por_categoria" %}';  // Assegure-se de que esta é a URL correta
+                if (categoriaId) {
+                    $.ajax({
+                        url: url,
+                        data: {'categoria': categoriaId},
+                        success: function (data) {
+                            $('#id_subcategoria').html(data);
+                        }
+                    });
+                } else {
+                    $('#id_subcategoria').html('<option value="">---------</option>');
+                }
+            });
+        });
+
+        // Validação de formulário Bootstrap
+        (function () {
+            'use strict';
+            window.addEventListener('load', function () {
+                // Fetch all the forms we want to apply custom Bootstrap validation styles to
+                var forms = document.getElementsByClassName('needs-validation');
+                // Loop over them and prevent submission
+                var validation = Array.prototype.filter.call(forms, function (form) {
+                    form.addEventListener('submit', function (event) {
+                        if (form.checkValidity() === false) {
+                            event.preventDefault();
+                            event.stopPropagation();
+                        }
+                        form.classList.add('was-validated');
+                    }, false);
+                });
+            }, false);
+        })();
+    </script>
+
+
+
+{% endblock %}
+
+
+
+

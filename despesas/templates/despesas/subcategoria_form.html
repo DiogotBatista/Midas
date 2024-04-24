@@ -1,0 +1,16 @@
+{% extends 'base.html' %}
+{% block title %}Subcaegoria{% endblock %}
+
+{% block content %}
+    <div class="container mt-4">
+        <h1>{{ view.get_heading }}</h1>
+        <form method="post">
+            {% csrf_token %}
+            {{ form.as_p }}
+            <button type="submit" class="btn btn-success"><i class="fas fa-save"></i> Salvar</button>
+            <a href="{% url 'subcategoria-list' %}" class="btn btn-secondary"><i class="fas fa-times"></i> Cancelar</a>
+        </form>
+
+    </div>
+
+{% endblock %}

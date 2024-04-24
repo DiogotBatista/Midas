@@ -1,0 +1,35 @@
+{% extends 'base.html' %}
+
+{% block title %}Confirmar Deleção{% endblock %}
+
+{% load static %}
+
+{% block extra_head %}
+    <!-- Inclua o CSS do FontAwesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+{% endblock %}
+
+{% block content %}
+    <div class="container mt-4">
+        <div class="row justify-content-center">
+            <div class="col-md-6">
+                <div class="card shadow">
+                    <div class="card-body">
+                        <h1 class="card-title">Confirmar Exclusão</h1>
+                        <p class="card-text">Tem certeza que deseja deletar esta conta? Esta ação não pode ser
+                            desfeita.</p>
+                        <form method="post" class="d-flex justify-content-between">
+                            {% csrf_token %}
+                            <button type="submit" class="btn btn-danger">
+                                <i class="fas fa-trash-alt"></i> Deletar
+                            </button>
+                            <a href="{% url 'conta-list' %}" class="btn btn-secondary">
+                                <i class="fas fa-times"></i> Cancelar
+                            </a>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

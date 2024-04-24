@@ -1,0 +1,99 @@
+{% extends 'base.html' %}
+
+{% block title %}Lista de Despesas{% endblock %}
+
+{% block content %}
+    <div class="container mt-4">
+        <h1>Lista de Despesas</h1>
+        <a href="{% if request.GET.from == 'conta_list' %}{% url 'conta-list' %}{% else %}{% url 'index' %}{% endif %}"
+           class="btn btn-secondary mb-3"><i class="fas fa-arrow-left"></i> Voltar</a>
+        <div class="mb-3">
+            <form method="get" action="{% url 'despesa-list' %}"
+                  class="d-flex justify-content-between align-items-center">
+                <div class="input-group w-75">
+                    <input type="text" class="form-control" placeholder="Pesquisar despesas..." name="search"
+                           value="{{ request.GET.search }}">
+                    <button type="submit" class="btn btn-outline-secondary"><i class="fas fa-search"></i></button>
+                    <a href="{% url 'despesa-list' %}" class="btn btn-outline-danger"><i class="fas fa-times"></i></a>
+                </div>
+                <a href="{% url 'despesa-create' %}?next={{ request.get_full_path }}{% if request.GET.conta_id %}&conta_id={{ request.GET.conta_id }}{% endif %}"
+                   class="btn btn-success">
+                    <i class="fas fa-plus"></i> Nova Despesa
+                </a>
+
+            </form>
+        </div>
+
+        {% if messages %}
+            <div>
+                {% for message in messages %}
+                    <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+                        {{ message }}
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
+                {% endfor %}
+            </div>
+        {% endif %}
+
+        <div class="table-responsive">
+            <table class="table table-striped">
+                <thead>
+                <tr>
+                    <th class="text-center">Valor</th>
+                    <th class="text-center">Data</th>
+                    <th class="text-center">Categoria</th>
+                    <th class="text-center">Subcategoria</th>
+                    <th class="text-center">Descrição</th>
+                    <th class="text-center">Conta</th>
+                    <th class="text-center">Ações</th>
+                </tr>
+                </thead>
+                <tbody>
+                {% for despesa in object_list %}
+                    <tr>
+                        <td class="text-center">{{ despesa.valor }}</td>
+                        <td class="text-center">{{ despesa.data|date:"d/m/Y" }}</td>
+                        <td class="text-center">{{ despesa.categoria.nome }}</td>
+                        <td class="text-center">{{ despesa.subcategoria.nome }}</td>
+                        <td>{{ despesa.descricao }}</td>
+                        <td class="text-center">{{ despesa.conta.nome }}</td>
+                        <td class="text-center">
+                            <a href="{% url 'despesa-detail' despesa.id %}" class="btn btn-info btn-sm"
+                               aria-label="Ver"><i class="fas fa-eye"></i></a>
+                            <a href="{% url 'despesa-update' despesa.id %}" class="btn btn-primary btn-sm"
+                               aria-label="Editar"><i class="fas fa-edit"></i></a>
+                            <a href="{% url 'despesa-delete' despesa.id %}" class="btn btn-danger btn-sm"
+                               aria-label="Deletar"><i class="fas fa-trash-alt"></i></a>
+                        </td>
+                    </tr>
+                {% empty %}
+                    <tr>
+                        <td colspan="7" class="text-center">Nenhuma despesa encontrada.</td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Paginação -->
+        <div class="d-flex justify-content-center">
+            <nav>
+                <ul class="pagination">
+                    {% if page_obj.has_previous %}
+                        <li class="page-item"><a class="page-link" href="?page=1">&laquo; Primeira</a></li>
+                        <li class="page-item"><a class="page-link" href="?page={{ page_obj.previous_page_number }}">Anterior</a>
+                        </li>
+                    {% endif %}
+                    <li class="page-item active"><a class="page-link">Página {{ page_obj.number }}
+                        de {{ page_obj.paginator.num_pages }}</a></li>
+                    {% if page_obj.has_next %}
+                        <li class="page-item"><a class="page-link"
+                                                 href="?page={{ page_obj.next_page_number }}">Próxima</a></li>
+                        <li class="page-item"><a class="page-link" href="?page={{ page_obj.paginator.num_pages }}">Última
+                            &raquo;</a></li>
+                    {% endif %}
+                </ul>
+            </nav>
+        </div>
+    </div>
+{% endblock %}

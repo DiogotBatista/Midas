@@ -1,0 +1,27 @@
+{% extends 'base.html' %}
+
+{% block title %}Configurações{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <h1 class="mb-4">Configurações</h1>
+    <p class="mb-5">Aqui você pode gerenciar todas as configurações relacionadas a categorias, subcategorias e outras funcionalidades do sistema.</p>
+    <div class="row">
+        <div class="col-lg-4 col-md-6 mb-4">
+            <a href="{% url 'categoria-list' %}" class="btn btn-primary btn-lg btn-block d-flex align-items-center justify-content-center">
+                <i class="fas fa-folder-plus" style="margin-right: 12px;"></i>Gerenciar Categorias
+            </a>
+        </div>
+        <div class="col-lg-4 col-md-6 mb-4">
+            <a href="{% url 'subcategoria-list' %}" class="btn btn-success btn-lg btn-block d-flex align-items-center justify-content-center">
+                <i class="fas fa-folder-open" style="margin-right: 12px;"></i>Gerenciar Subcategorias
+            </a>
+        </div>
+        <div class="col-lg-4 col-md-12 mb-0">
+            <a href="{% url 'index' %}" class="btn btn-secondary btn-lg btn-block d-flex align-items-center justify-content-center">
+                <i class="fas fa-arrow-left" style="margin-right: 12px;"></i>Voltar
+            </a>
+        </div>
+    </div>
+</div>
+{% endblock %}
