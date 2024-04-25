@@ -43,6 +43,7 @@
             <thead>
             <tr>
                 <th scope="col">Subcategorias</th>
+                <th scope="col">Categoria</th>
                 <th class='text-center' scope="col">Ações</th>
             </tr>
             </thead>
@@ -50,9 +51,11 @@
             {% for subcategoria in object_list %}
                 <tr>
                     <td>{{ subcategoria.nome }}</td>
+                    <td>{{ subcategoria.categoria.nome }}</td>
+
                     <td class='text-center'>
                         {% if not subcategoria.padrao %}
-                            <a href="{% url 'categoria-update' subcategoria.pk %}" class="btn btn-primary btn-sm"
+                            <a href="{% url 'subcategoria-update' subcategoria.pk %}" class="btn btn-primary btn-sm"
                                aria-label="Editar {{ subcategoria.nome }}"><i class="fas fa-edit"></i></a>
 
                             <a href="{% url 'subcategoria-delete' subcategoria.id %}" class="btn btn-danger btn-sm"

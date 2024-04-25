@@ -1,7 +1,6 @@
 {% block content %}
 
     <style>
-
         footer {
             position: relative;
             flex-shrink: 0;
@@ -15,34 +14,23 @@
             margin-bottom: 1px;
             font-size: 0.9em;
         }
-
     </style>
 
-    <footer class="footer bg-light mt-auto py-1 border-top"> <!-- Reduzido o padding para py-3 -->
+    <footer class="footer bg-light mt-auto py-1 border-top">
         <div class="container">
-            <div class="row">
-                <div class="col-md-6 col-lg-4 mb-2"> <!-- Reduzido o margin-bottom para mb-2 -->
-                    <h5>Contato</h5>
-                    <ul class="list-unstyled text-small">
-                        <li><a class="text-muted" href="mailto:contato@dbsistemas.com.br">contato@dbsistemas.com.br</a>
-                        </li>
-                    </ul>
+            <div class="row align-items-center">
+                <div class="col-md-4 text-md-left mb-2">
+                    <span class="text-muted">© 2024 DB Sistemas Full Stack</span>
                 </div>
-                <div class="col-md-6 col-lg-4 mb-2"> <!-- Reduzido o margin-bottom para mb-2 -->
-                    <h5>Site</h5>
-                    <ul class="list-unstyled text-small">
-                        <li><a class="text-muted" href="https://dbsistemas.com.br/">dbsistemas.com.br</a></li>
-                    </ul>
+                <div class="col-md-4 text-md-right mb-2">
+                    <span><strong>Site:</strong> <a class="text-muted" href="https://dbsistemas.com.br/">dbsistemas.com.br</a></span>
                 </div>
-                <div class="col-md-12 col-lg-4 mb-2"> <!-- Reduzido o margin-bottom para mb-2 -->
-                    <h5>Sobre</h5>
-                    <p class="text-muted">Desenvolvido por DB Sistemas Full Stack. Transformamos ideias em soluções
-                        digitais inovadoras.</p>
+                <div class="col-md-4 text-md-center mb-2">
+                    <span><strong>Contato:</strong> <a class="text-muted" href="mailto:contato@dbsistemas.com.br">contato@dbsistemas.com.br</a></span>
                 </div>
-            </div>
-            <div class="text-center">
-                <span class="text-muted">© 2024 DB Sistemas Full Stack</span>
+
             </div>
         </div>
     </footer>
+
 {% endblock %}
