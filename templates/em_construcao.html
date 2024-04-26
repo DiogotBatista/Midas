@@ -1,0 +1,15 @@
+{% extends 'base.html' %}
+{% block title %}Em construção{% endblock %}
+
+
+{% block content %}
+    <div class="container">
+        <div class="row">
+            <div class="col-md-12">
+                <h1>Em construção</h1>
+                <p>Desculé, esta parte do sistema ainda se encontra em desenvolvimento. Avisaremos quando estiver pronto</p>
+                <a href="{% url 'index' %}" class="btn btn-secondary mb-3"><i class="fas fa-arrow-left"></i> Voltar</a>
+            </div>
+        </div>
+    </div>
+{% endblock %}
