@@ -1,9 +1,20 @@
 {% extends 'base.html' %}
-{% block title %}{% if object %}Editar Despesa{% else %}Criar Despesa{% endif %}{% endblock %}
+{% block title %}{% if object %}Editar Despesa {% else %}Criar Despesa{% endif %}{% endblock %}
 
 {% block content %}
     <div class="container mt-1">
-        <h1 class="mb-4">{% if object %}Editar{% else %}Criar{% endif %} Despesa</h1>
+            <h1 class="mb-4">{% if object %}Editar{% else %}Criar{% endif %} Despesa</h1>
+            {% if messages %}
+            <div class="mt-2">
+                {% for message in messages %}
+                    <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+                        {{ message }}
+
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
+                {% endfor %}
+            </div>
+        {% endif %}
         <form method="post" class="needs-validation" novalidate>
             {% csrf_token %}
             <div class="row">
@@ -23,7 +34,11 @@
                 {% endfor %}
 
             </div>
-            <button type="submit" class="btn btn-primary"><i class="fas fa-save"></i> Salvar</button>
+            <button type="submit" class="btn btn-success"><i class="fas fa-save"></i> Salvar</button>
+            {% if not object %}
+            <button type="submit" name="save_and_add_another" class="btn btn-primary"><i class="fas fa-plus"></i> Salvar e adicionar outra
+            </button>
+            {% endif %}
             <a href="{% if request.GET.next %}{{ request.GET.next }}{% else %}{% url 'despesa-list' %}{% endif %}"
                class="btn btn-secondary"><i class="fas fa-times"></i> Cancelar</a>
         </form>

@@ -1,8 +1,20 @@
 {% extends 'base.html' %}
+{% block title %}{% if object %}Editar Conta {% else %}Criar Conta{% endif %}{% endblock %}
 
 {% block content %}
     <div class="container mt-4">
-        <h2>{% if object %}Editar Conta{% else %}Nova Conta{% endif %}</h2>
+        <h2>{% if object %}Editar Conta: {{ conta.nome }} {% else %}Nova Conta{% endif %}</h2>
+        {% if messages %}
+            <div class="mt-2">
+                {% for message in messages %}
+                    <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+                        {{ message }}
+
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
+                {% endfor %}
+            </div>
+        {% endif %}
         <form method="post" class="needs-validation" novalidate>
             {% csrf_token %}
             {% for field in form %}
@@ -19,7 +31,12 @@
                     {% endfor %}
                 </div>
             {% endfor %}
-            <button type="submit" class="btn btn-primary"><i class="fas fa-save"></i> Salvar</button>
+            <button type="submit" class="btn btn-success"><i class="fas fa-save"></i> Salvar</button>
+            {% if not object %}
+            <button type="submit" name="save_and_add_another" class="btn btn-primary"><i class="fas fa-plus"></i> Salvar
+                e adicionar outra
+            </button>
+            {% endif %}
             <a href="{% url 'conta-list' %}" class="btn btn-secondary"><i class="fas fa-times"></i> Cancelar</a>
         </form>
     </div>

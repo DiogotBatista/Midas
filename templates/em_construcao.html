@@ -1,15 +1,51 @@
 {% extends 'base.html' %}
+{% load static %}
+
 {% block title %}Em construção{% endblock %}
 
-
 {% block content %}
-    <div class="container">
-        <div class="row">
-            <div class="col-md-12">
-                <h1>Em construção</h1>
-                <p>Desculé, esta parte do sistema ainda se encontra em desenvolvimento. Avisaremos quando estiver pronto</p>
-                <a href="{% url 'index' %}" class="btn btn-secondary mb-3"><i class="fas fa-arrow-left"></i> Voltar</a>
-            </div>
+    <style>
+        body {
+            background-color: #f0f0f0; /* Aplica cor de fundo a toda a página */
+            margin: 0;
+            height: 100%;
+            min-height: 100vh;
+        }
+        .construction-content {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 80vh;
+            text-align: center;
+            padding: 30px;
+            background: white;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1); /* Sombra sutil para a caixa de conteúdo */
+            border-radius: 10px;
+            margin: auto;
+            max-width: 1000vh;
+        }
+        .btn-secondary {
+            color: #ffffff;
+            background-color: #6c757d;
+            border-color: #6c757d;
+            transition: all 0.3s ease; /* Transição suave para interações do botão */
+        }
+        .btn-secondary:hover {
+            background-color: #5a6268;
+            border-color: #545b62;
+        }
+        .btn-secondary i {
+            margin-right: 5px;
+        }
+    </style>
+
+    <div class="construction-content">
+        <div>
+            <h1>Em Construção</h1>
+            <p>Desculpe, esta parte do sistema ainda se encontra em desenvolvimento. Avisaremos quando estiver pronto.</p>
+            <a href="{% url 'index' %}" class="btn btn-secondary">
+                <i class="fas fa-arrow-left"></i> Voltar
+            </a>
         </div>
     </div>
 {% endblock %}

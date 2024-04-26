@@ -50,3 +50,7 @@ admin.site.register(Despesa, DespesaAdmin)
 admin.site.register(CartaoCredito, CartaoCreditoAdmin)
 admin.site.register(PagamentoParcelado, PagamentoParceladoAdmin)
 admin.site.register(Cheque, ChequeAdmin)
+
+admin.site.site_header = "MIDAS - Administração"
+admin.site.site_title = "MIDAS - Administração"
+admin.site.index_title = "MIDAS - ADM"

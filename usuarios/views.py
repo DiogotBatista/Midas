@@ -1,5 +1,9 @@
+from django.contrib.auth.mixins import LoginRequiredMixin
 from django.shortcuts import render
+from django.views.generic import TemplateView
+
 from .models import Aviso
+
 
 def index(request):
     avisos = Aviso.objects.all()
@@ -8,3 +12,7 @@ def index(request):
         'avisos': avisos,
     }
     return render(request, 'index.html', context)
+
+
+class EmConstrucaoView(LoginRequiredMixin, TemplateView):
+    template_name = 'em_construcao.html'

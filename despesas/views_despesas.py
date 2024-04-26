@@ -2,6 +2,7 @@ from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.db.models import Q
 from django.http import HttpResponse
+from django.http import HttpResponseRedirect
 from django.shortcuts import get_object_or_404, redirect
 from django.urls import reverse_lazy, reverse
 from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView
@@ -84,9 +85,16 @@ class DespesaCreateView(LoginRequiredMixin, CreateView):
             conta_id = self.request.session.pop('conta_locked')
             form.instance.conta = get_object_or_404(Conta, pk=conta_id)
             messages.info(self.request, 'Conta bloqueada. Não é possível alterar a conta.')
-        messages.success(self.request, 'Despesa criada com sucesso!')
+
         form.instance.usuario = self.request.user
-        return super(DespesaCreateView, self).form_valid(form)
+        response = super(DespesaCreateView, self).form_valid(form)
+
+        messages.success(self.request, 'Despesa criada com sucesso!')
+
+        if 'save_and_add_another' in self.request.POST:
+            return HttpResponseRedirect(reverse('despesa-create'))  # Redireciona para a mesma página de criação
+
+        return response
 
     def get_success_url(self):
         # Retorna ao local apropriado com base na origem do usuário

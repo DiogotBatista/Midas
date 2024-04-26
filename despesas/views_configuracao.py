@@ -1,10 +1,9 @@
 from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.db.models import Q
+from django.http import HttpResponseRedirect
 from django.urls import reverse_lazy, reverse
 from django.views.generic import ListView, CreateView, UpdateView, DeleteView
-from django.http import HttpResponseRedirect
-
 
 from .forms import CategoriaForm, SubCategoriaForm
 from .models import Categoria, SubCategoria
@@ -40,8 +39,15 @@ class CategoriaCreateView(LoginRequiredMixin, CreateView):
     def form_valid(self, form):
         if not form.instance.padrao:
             form.instance.usuario = self.request.user
-            messages.success(self.request, 'Categoria criada com sucesso!')
-        return super().form_valid(form)
+
+        messages.success(self.request, 'Categoria criada com sucesso!')
+
+        response = super().form_valid(form)
+
+        if 'save_and_add_another' in self.request.POST:
+            return HttpResponseRedirect(reverse('categoria-create'))
+
+        return response
 
 
 class CategoriaUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
@@ -110,15 +116,26 @@ class SubCategoriaCreateView(LoginRequiredMixin, CreateView):
     form_class = SubCategoriaForm
     template_name = 'despesas/subcategoria_form.html'
 
+    def get_form_kwargs(self):
+        kwargs = super(SubCategoriaCreateView, self).get_form_kwargs()
+        kwargs['user'] = self.request.user  # Passando o usuário logado para o form
+        return kwargs
 
     def get_success_url(self):
         return self.request.GET.get('next', reverse('subcategoria-list'))
 
     def form_valid(self, form):
-        form.instance.usuario = self.request.user
-        response = super().form_valid(form)
+        if not form.instance.padrao:
+            form.instance.usuario = self.request.user
+
         messages.success(self.request, 'Subcategoria criada com sucesso!')
-        return HttpResponseRedirect(self.get_success_url())
+
+        response = super().form_valid(form)
+
+        if 'save_and_add_another' in self.request.POST:
+            return HttpResponseRedirect(reverse('subcategoria-create'))
+
+        return response
 
 
 class SubCategoriaUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
@@ -162,7 +179,6 @@ class SubCategoriaDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView
 class CongiguracaoView(LoginRequiredMixin, ListView):
     template_name = 'despesas/configuracao.html'
     model = Categoria
-
 
 
 class SubcategoriaPorCategoriaView(ListView):

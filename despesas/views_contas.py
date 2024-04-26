@@ -3,6 +3,9 @@ from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.db.models import Q
 from django.urls import reverse_lazy
 from django.views.generic import CreateView, UpdateView, ListView, DeleteView
+from django.http import HttpResponseRedirect
+from django.urls import reverse
+
 
 from .forms import ContaForm
 from .models import Conta
@@ -20,6 +23,9 @@ class ContaCreateView(LoginRequiredMixin, CreateView):
         form.instance.usuario = self.request.user
         response = super().form_valid(form)
         messages.success(self.request, 'Conta adicionada com sucesso!')
+        if 'save_and_add_another' in self.request.POST:
+            return HttpResponseRedirect(reverse('conta-create'))
+
         return response
 
 

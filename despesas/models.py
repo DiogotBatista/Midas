@@ -34,6 +34,7 @@ class Categoria(models.Model):
     padrao = models.BooleanField(default=False)
 
     class Meta:
+        ordering = ['nome']
         verbose_name_plural = 'Categorias'
 
     def __str__(self):
@@ -48,6 +49,7 @@ class SubCategoria(models.Model):
     padrao = models.BooleanField(default=False)
 
     class Meta:
+        ordering = ['nome']
         verbose_name_plural = 'Subcategorias'
 
     def __str__(self):
