@@ -41,6 +41,7 @@
                 <tr>
                     <th class="text-center">Valor</th>
                     <th class="text-center">Data</th>
+                    <th class="text-center">Forma de Pg</th>
                     <th class="text-center">Categoria</th>
                     <th class="text-center">Subcategoria</th>
                     <th class="text-center">Descrição</th>
@@ -53,6 +54,7 @@
                     <tr>
                         <td class="text-center">{{ despesa.valor }}</td>
                         <td class="text-center">{{ despesa.data|date:"d/m/Y" }}</td>
+                        <td class="text-center">{{ despesa.forma_pagamento }}</td>
                         <td class="text-center">{{ despesa.categoria.nome }}</td>
                         <td class="text-center">{{ despesa.subcategoria.nome }}</td>
                         <td>{{ despesa.descricao }}</td>

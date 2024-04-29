@@ -2,7 +2,8 @@ from django.urls import path
 
 from .views_configuracao import CategoriaListView, CategoriaCreateView, CategoriaUpdateView, CategoriaDeleteView, \
     SubCategoriaListView, SubCategoriaCreateView, SubCategoriaUpdateView, SubCategoriaDeleteView, \
-    CongiguracaoView, SubcategoriaPorCategoriaView
+    CongiguracaoView, SubcategoriaPorCategoriaView, FormaPagamentoListView, FormaPagamentoCreateView, \
+    FormaPagamentoUpdateView, FormaPagamentoDeleteView
 from .views_contas import ContaCreateView, ContaUpdateView, ContaListView, ContaDeleteView
 from .views_despesas import DespesaListView, DespesaDetailView, DespesaUpdateView, DespesaDeleteView, \
     subcategorias_por_categoria, DespesasPorContaView, DespesaCreateView
@@ -44,7 +45,11 @@ urlpatterns = [
     # API
     path('api/subcategorias/', subcategorias_por_categoria, name='subcategorias_por_categoria'),
 
+    # Formas de pagamentos
 
-
+    path('formas-pagamento/', FormaPagamentoListView.as_view(), name='forma-pagamento-list'),
+    path('formas-pagamento/create/', FormaPagamentoCreateView.as_view(), name='forma-pagamento-create'),
+    path('formas-pagamento/<int:pk>/edit/', FormaPagamentoUpdateView.as_view(), name='forma-pagamento-update'),
+    path('formas-pagamento/<int:pk>/delete/', FormaPagamentoDeleteView.as_view(), name='forma-pagamento-delete'),
 
 ]

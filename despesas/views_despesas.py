@@ -31,6 +31,7 @@ class DespesaListView(LoginRequiredMixin, ListView):
         if search_query:
             queryset = queryset.filter(
                 Q(valor__icontains=search_query) |
+                Q(forma_pagamento__nome__icontains=search_query) |
                 Q(descricao__icontains=search_query) |
                 Q(categoria__nome__icontains=search_query) |
                 Q(subcategoria__nome__icontains=search_query) |

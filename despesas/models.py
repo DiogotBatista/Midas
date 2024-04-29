@@ -55,11 +55,24 @@ class SubCategoria(models.Model):
     def __str__(self):
         return self.nome
 
+class FormaPagamento(models.Model):
+    usuario = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='forma_pagamento',
+                                null=True, blank=True)
+    nome = models.CharField(max_length=100, db_index=True)
+    padrao = models.BooleanField(default=False)
+
+    class Meta:
+        ordering = ['nome']
+        verbose_name_plural = 'Formas de Pagamento'
+
+    def __str__(self):
+        return self.nome
 
 class Despesa(models.Model):
     usuario = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     conta = models.ForeignKey(Conta, on_delete=models.CASCADE)
     valor = MoneyField(max_digits=10, decimal_places=2, default_currency='BRL')
+    forma_pagamento = models.ForeignKey(FormaPagamento, on_delete=models.SET_NULL, null=True)
     data = models.DateField(db_index=True)
     categoria = models.ForeignKey(Categoria, on_delete=models.CASCADE, null=True)
     subcategoria = models.ForeignKey(SubCategoria, on_delete=models.CASCADE, null=True)

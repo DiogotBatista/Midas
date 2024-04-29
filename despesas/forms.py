@@ -1,16 +1,28 @@
 from django import forms
 from django.db import models
 
-from .models import Despesa, Conta, Categoria, SubCategoria
+from .models import Despesa, Conta, Categoria, SubCategoria, FormaPagamento
 
+
+class FormaPagamentoForm(forms.ModelForm):
+    class Meta:
+        model = FormaPagamento
+        fields = ['nome']
+        labels = {
+            'nome': 'Nome da Forma de Pagamento',
+        }
+        widgets = {
+            'nome': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Digite o nome da forma de pagamento'}),
+        }
 
 class DespesaForm(forms.ModelForm):
     class Meta:
         model = Despesa
-        fields = ['conta', 'valor', 'data', 'categoria', 'subcategoria', 'descricao']
+        fields = ['conta', 'valor', 'forma_pagamento','data', 'categoria', 'subcategoria', 'descricao']
         widgets = {
             'data': forms.DateInput(format='%Y-%m-%d', attrs={'type': 'date', 'class': 'form-control'}),
             'conta': forms.Select(attrs={'class': 'form-control'}),
+            'forma_pagamento': forms.Select(attrs={'class': 'form-control'}),
             'categoria': forms.Select(attrs={'class': 'form-control'}),
             'subcategoria': forms.Select(attrs={'class': 'form-control'}),
             'descricao': forms.Textarea(attrs={'class': 'form-control', 'rows': 3, 'placeholder': 'Digite uma descrição para a despesa'}),
@@ -23,6 +35,9 @@ class DespesaForm(forms.ModelForm):
         if user:
             self.fields['conta'].queryset = Conta.objects.filter(usuario=user)
             self.fields['categoria'].queryset = Categoria.objects.filter(
+                models.Q(usuario=user) | models.Q(padrao=True)
+            ).distinct()
+            self.fields['forma_pagamento'].queryset = FormaPagamento.objects.filter(
                 models.Q(usuario=user) | models.Q(padrao=True)
             ).distinct()
             if conta_id:

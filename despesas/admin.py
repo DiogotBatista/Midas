@@ -1,7 +1,11 @@
 from django.contrib import admin
 
-from .models import Conta, Categoria, SubCategoria, Despesa, CartaoCredito, PagamentoParcelado, Cheque
+from .models import Conta, Categoria, SubCategoria, Despesa, CartaoCredito, PagamentoParcelado, Cheque, FormaPagamento
 
+class FormasPagamentoAdmin(admin.ModelAdmin):
+    list_display = ('nome', 'usuario', 'padrao')
+    search_fields = ('nome', 'usuario__username')
+    list_filter = ('padrao',)
 
 class ContaAdmin(admin.ModelAdmin):
     list_display = ('nome', 'usuario', 'descricao')
@@ -50,6 +54,7 @@ admin.site.register(Despesa, DespesaAdmin)
 admin.site.register(CartaoCredito, CartaoCreditoAdmin)
 admin.site.register(PagamentoParcelado, PagamentoParceladoAdmin)
 admin.site.register(Cheque, ChequeAdmin)
+admin.site.register(FormaPagamento, FormasPagamentoAdmin)
 
 admin.site.site_header = "MIDAS - Administração"
 admin.site.site_title = "MIDAS - Administração"

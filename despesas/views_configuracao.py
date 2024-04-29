@@ -5,8 +5,8 @@ from django.http import HttpResponseRedirect
 from django.urls import reverse_lazy, reverse
 from django.views.generic import ListView, CreateView, UpdateView, DeleteView
 
-from .forms import CategoriaForm, SubCategoriaForm
-from .models import Categoria, SubCategoria
+from .forms import CategoriaForm, SubCategoriaForm, FormaPagamentoForm
+from .models import Categoria, SubCategoria, FormaPagamento
 
 
 class CategoriaListView(LoginRequiredMixin, ListView):
@@ -59,6 +59,10 @@ class CategoriaUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
     def test_func(self):
         categoria = self.get_object()
         return categoria.usuario == self.request.user or categoria.padrao == False
+
+    def get_queryset(self):
+        qs = super().get_queryset()  # Obtem a queryset original
+        return qs.filter(usuario=self.request.user)
 
     def form_valid(self, form):
         if not form.instance.padrao:
@@ -148,6 +152,10 @@ class SubCategoriaUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView
         subcategoria = self.get_object()
         return subcategoria.usuario == self.request.user
 
+    def get_queryset(self):
+        qs = super().get_queryset()  # Obtem a queryset original
+        return qs.filter(usuario=self.request.user)
+
     def form_valid(self, form):
         if not form.instance.padrao:
             messages.success(self.request, 'Subcategoria atualizada com sucesso!')
@@ -191,3 +199,83 @@ class SubcategoriaPorCategoriaView(ListView):
         subcategoria = SubCategoria.objects.filter(categoria__id=categoria_id, usuario=self.request.user)
         # print("Subvategorias encontradas:", categoria)  # Apenas para depuração
         return subcategoria
+
+
+class FormaPagamentoCreateView(LoginRequiredMixin, CreateView):
+    model = FormaPagamento
+    form_class = FormaPagamentoForm
+    template_name = 'despesas/forma_pagamento_form.html'
+    success_url = reverse_lazy('forma-pagamento-list')
+
+    def form_valid(self, form):
+        if not form.instance.padrao:
+            form.instance.usuario = self.request.user
+
+        messages.success(self.request, 'Forma de pagamento criada com sucesso!')
+
+        response = super().form_valid(form)
+
+        if 'save_and_add_another' in self.request.POST:
+            return HttpResponseRedirect(reverse('forma-pagamento-create'))
+
+        return response
+
+class FormaPagamentoListView(LoginRequiredMixin, ListView):
+    model = FormaPagamento
+    template_name = 'despesas/forma_pagamento_list.html'
+    paginate_by = 10
+
+    def get_queryset(self):
+        queryset = super().get_queryset().filter(usuario=self.request.user) | FormaPagamento.objects.filter(padrao=True)
+        search_query = self.request.GET.get('search', None)
+
+        if search_query:
+            queryset = queryset.filter(
+                Q(nome__icontains=search_query)
+            )
+
+        return queryset
+
+    def get_context_data(self, **kwargs):
+        context = super(FormaPagamentoListView, self).get_context_data(**kwargs)
+        return context
+
+class FormaPagamentoUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
+    model = FormaPagamento
+    form_class = FormaPagamentoForm
+    template_name = 'despesas/forma_pagamento_form.html'
+    success_url = reverse_lazy('forma-pagamento-list')
+
+    def test_func(self):
+        formaPagamento = self.get_object()
+        return formaPagamento.usuario == self.request.user or formaPagamento.padrao == False
+
+    def get_queryset(self):
+        qs = super().get_queryset()  # Obtem a queryset original
+        return qs.filter(usuario=self.request.user)
+
+    def form_valid(self, form):
+        if not form.instance.padrao:
+            messages.success(self.request, 'Forma de pagamento atualizada com sucesso!')
+        return super().form_valid(form)
+
+class FormaPagamentoDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
+    model = FormaPagamento
+    template_name = 'despesas/forma_pagamento_confirm_delete.html'
+    success_url = reverse_lazy('forma-pagamento-list')
+
+    def test_func(self):
+        formaPagamento = self.get_object()
+        return formaPagamento.usuario == self.request.user and not formaPagamento.padrao
+
+    def get_queryset(self):
+        """
+        Assegura que apenas as despesas pertencentes ao usuário logado possam ser acessadas.
+        """
+        qs = super().get_queryset()  # Obtem a queryset original
+        return qs.filter(usuario=self.request.user)
+
+    def post(self, request, *args, **kwargs):
+        response = super().post(request, *args, **kwargs)  # Isso chama delete()
+        messages.success(request, 'Forma de Pagamento deletada com sucesso!')
+        return response

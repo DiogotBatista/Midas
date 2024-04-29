@@ -9,13 +9,19 @@
     <div class="row">
         <div class="col-lg-4 col-md-6 mb-4">
             <a href="{% url 'categoria-list' %}" class="btn btn-primary btn-lg btn-block d-flex align-items-center justify-content-center">
-                <i class="fas fa-folder-plus" style="margin-right: 12px;"></i>Gerenciar Categorias
+               <i class="fas fa-folder-open" style="margin-right: 12px;"></i>Gerenciar Categorias
             </a>
         </div>
         <div class="col-lg-4 col-md-6 mb-4">
             <a href="{% url 'subcategoria-list' %}" class="btn btn-success btn-lg btn-block d-flex align-items-center justify-content-center">
                 <i class="fas fa-folder-open" style="margin-right: 12px;"></i>Gerenciar Subcategorias
             </a>
+        </div>
+        <div class="col-lg-4 col-md-6 mb-4">
+            <a href="{% url 'forma-pagamento-list' %}" class="btn btn-warning btn-lg btn-block d-flex align-items-center justify-content-center">
+                <i class="fas fa-folder-open" style="margin-right: 12px;"></i>Gerenciar Formas de Pagamento
+            </a>
+        </div>
         </div>
         <div class="col-lg-4 col-md-12 mb-0">
             <a href="{% url 'index' %}" class="btn btn-secondary btn-lg btn-block d-flex align-items-center justify-content-center">

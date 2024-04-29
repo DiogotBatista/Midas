@@ -1,0 +1,97 @@
+{% extends 'base.html' %}
+{% block title %}Gerenciar Categorias{% endblock %}
+
+{% block content %}
+    <div class="container mt-4">
+        <h1>Gerenciar Formas de Pagamento</h1>
+
+        <a href="{% url 'configuracao' %}" class="btn btn-secondary mb-3"><i class="fas fa-arrow-left"></i> Voltar</a>
+
+        <div class="mb-3">
+            <form method="get" action="{% url 'forma-pagamento-list' %}"
+                  class="d-flex justify-content-between align-items-center">
+                <div class="input-group w-75">
+                    <input type="text" class="form-control" placeholder="Pesquisar formas de pagamentos..." name="search"
+                           value="{{ request.GET.search }}">
+                    <button type="submit" class="btn btn-outline-secondary"><i class="fas fa-search"></i></button>
+                    <a href="{% url 'forma-pagamento-list' %}" class="btn btn-outline-danger"><i class="fas fa-times"></i></a>
+                </div>
+                <a href="{% url 'forma-pagamento-create' %}" class="btn btn-success"><i class="fas fa-plus"></i>                     Nova
+                    Forma de Pagamento</a>
+                </a>
+            </form>
+        </div>
+        {% if messages %}
+            <div class="mt-2">
+                {% for message in messages %}
+                    <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+                        {{ message }}
+
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
+                {% endfor %}
+            </div>
+        {% endif %}
+
+        <div id="message-container" class="alert alert-success" style="display: none;"></div>
+
+        <table class="table">
+            <thead>
+            <tr>
+                <th scope="col">Formas de Pagamentos</th>
+                <th class='text-center' scope="col">Ações</th>
+            </tr>
+            </thead>
+
+            {% for formaPagamento in object_list %}
+                <tr>
+                    <td>{{ formaPagamento.nome }}</td>
+                    <td class='text-center'>
+                        {% if not formaPagamento.padrao %}
+                            <a href="{% url 'forma-pagamento-update' formaPagamento.pk %}" class="btn btn-primary btn-sm"
+                               aria-label="Editar {{ formaPagamento.nome }}"><i class="fas fa-edit"></i></a>
+
+                            <a href="{% url 'forma-pagamento-delete' formaPagamento.id %}" class="btn btn-danger btn-sm"
+                               aria-label="Deletar"><i class="fas fa-trash-alt"></i></a>
+
+                        {% else %}
+
+                            <span class="text-muted"
+                                  title="Esta forma de pagamento é padrão e não pode ser editada ou excluída."><i
+                                    class="fas fa-lock"></i> Padrão</span>
+                        {% endif %}
+                    </td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+
+    <!-- Paginação -->
+    <div class="d-flex justify-content-center">
+        <nav>
+            <ul class="pagination">
+                {% if page_obj.has_previous %}
+                    <li class="page-item"><a class="page-link" href="?page=1">&laquo; Primeira</a></li>
+                    <li class="page-item"><a class="page-link"
+                                             href="?page={{ page_obj.previous_page_number }}">Anterior</a>
+                    </li>
+                {% endif %}
+                <li class="page-item active"><a class="page-link">Página {{ page_obj.number }}
+                    de {{ page_obj.paginator.num_pages }}</a></li>
+                {% if page_obj.has_next %}
+                    <li class="page-item"><a class="page-link"
+                                             href="?page={{ page_obj.next_page_number }}">Próxima</a></li>
+                    <li class="page-item"><a class="page-link" href="?page={{ page_obj.paginator.num_pages }}">Última
+                        &raquo;</a></li>
+                {% endif %}
+            </ul>
+        </nav>
+    </div>
+    </div>
+
+
+
+
+{% endblock %}
