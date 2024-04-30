@@ -12,20 +12,23 @@ class FormaPagamentoForm(forms.ModelForm):
             'nome': 'Nome da Forma de Pagamento',
         }
         widgets = {
-            'nome': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Digite o nome da forma de pagamento'}),
+            'nome': forms.TextInput(
+                attrs={'class': 'form-control', 'placeholder': 'Digite o nome da forma de pagamento'}),
         }
+
 
 class DespesaForm(forms.ModelForm):
     class Meta:
         model = Despesa
-        fields = ['conta', 'valor', 'forma_pagamento','data', 'categoria', 'subcategoria', 'descricao']
+        fields = ['conta', 'valor', 'forma_pagamento', 'data', 'categoria', 'subcategoria', 'descricao']
         widgets = {
             'data': forms.DateInput(format='%Y-%m-%d', attrs={'type': 'date', 'class': 'form-control'}),
             'conta': forms.Select(attrs={'class': 'form-control'}),
             'forma_pagamento': forms.Select(attrs={'class': 'form-control'}),
             'categoria': forms.Select(attrs={'class': 'form-control'}),
             'subcategoria': forms.Select(attrs={'class': 'form-control'}),
-            'descricao': forms.Textarea(attrs={'class': 'form-control', 'rows': 3, 'placeholder': 'Digite uma descrição para a despesa'}),
+            'descricao': forms.Textarea(
+                attrs={'class': 'form-control', 'rows': 3, 'placeholder': 'Digite uma descrição para a despesa'}),
         }
 
     def __init__(self, *args, **kwargs):
@@ -71,6 +74,7 @@ class CategoriaForm(forms.ModelForm):
             'nome': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Digite o nome da categoria'}),
         }
 
+
 class SubCategoriaForm(forms.ModelForm):
     class Meta:
         model = SubCategoria
@@ -89,4 +93,6 @@ class SubCategoriaForm(forms.ModelForm):
         super(SubCategoriaForm, self).__init__(*args, **kwargs)
         if user:
             # Filtrar categorias para incluir somente as do usuário ou padrões
-            self.fields['categoria'].queryset = Categoria.objects.filter(usuario=user).distinct()
+            self.fields['categoria'].queryset = Categoria.objects.filter(
+                models.Q(usuario=user) | models.Q(padrao=True)
+            ).distinct()

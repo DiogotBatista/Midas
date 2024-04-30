@@ -105,7 +105,8 @@ class SubCategoriaListView(LoginRequiredMixin, ListView):
 
         if search_query:
             queryset = queryset.filter(
-                Q(nome__icontains=search_query)
+                Q(nome__icontains=search_query) |
+                Q(categoria__nome__icontains=search_query)
             )
 
         return queryset

@@ -11,6 +11,7 @@ from .forms import DespesaForm
 from .models import Despesa, PagamentoParcelado, SubCategoria, Conta
 
 
+
 def marcar_parcela_como_paga(request, parcela_id):
     parcela = get_object_or_404(PagamentoParcelado, id=parcela_id, usuario=request.user)
     parcela.pago = True
@@ -152,8 +153,12 @@ class DespesaDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
 
 
 def subcategorias_por_categoria(request):
+    user = request.user  # Assume que o usuário está autenticado
     categoria_id = request.GET.get('categoria')
-    subcategorias = SubCategoria.objects.filter(categoria_id=categoria_id).order_by('nome')
+    subcategorias = SubCategoria.objects.filter(
+        Q(padrao=True) | Q(usuario=user),  # Argumentos de filtro Q antes de qualquer argumento posicional
+        categoria_id=categoria_id  # Argumentos posicionais ou outros filtros
+    ).order_by('nome')
     options = '<option value="">---------</option>'
     for subcategoria in subcategorias:
         options += f'<option value="{subcategoria.id}">{subcategoria.nome}</option>'

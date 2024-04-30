@@ -1,0 +1,169 @@
+{% extends 'base.html' %}
+
+{% block title %}Relatórios{% endblock %}
+
+{% block content %}
+<div class="container mt-2">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <h2>Relatório Financeiro</h2>
+        <div>
+             <button type="submit" form="reportForm" formaction="{% url 'export_pdf' %}" class="btn btn-danger me-1"><i class="fas fa-file-pdf"></i> PDF</button>
+            <button type="submit" form="reportForm" formaction="{% url 'export_excel' %}" class="btn btn-success"><i class="fas fa-file-excel"></i> Excel</button>
+        </div>
+    </div>
+    <form id="reportForm" method="get" action="{% url 'relatorio' %}" class="row g-3">
+        <div class="col-md-6">
+            <label for="data_inicio" class="form-label">Data Início:</label>
+            <input type="date" class="form-control" id="data_inicio" name="data_inicio" value="{{ filtro_data_inicio }}">
+        </div>
+        <div class="col-md-6">
+            <label for="data_fim" class="form-label">Data Fim:</label>
+            <input type="date" class="form-control" id="data_fim" name="data_fim" value="{{ filtro_data_fim }}">
+        </div>
+        <div class="col-md-4">
+            <label for="id_conta" class="form-label">Conta:</label>
+            <select class="form-control" id="id_conta" name="id_conta">
+                <option value="">Selecione uma conta</option>
+                {% for conta in contas %}
+                    <option value="{{ conta.id }}" {% if conta.id|stringformat:"s" == filtro_conta %}selected{% endif %}>
+                        {{ conta.nome }}
+                    </option>
+                {% endfor %}
+            </select>
+        </div>
+        <div class="col-md-4">
+            <label for="id_categoria" class="form-label">Categoria:</label>
+            <select class="form-control" id="id_categoria" name="id_categoria">
+                <option value="">Selecione uma categoria</option>
+                {% for categoria in categorias %}
+                    <option value="{{ categoria.id }}" {% if categoria.id|stringformat:"s" == filtro_categoria %}selected{% endif %}>
+                        {{ categoria.nome }}
+                    </option>
+                {% endfor %}
+            </select>
+        </div>
+        <div class="col-md-4">
+            <label for="id_subcategoria" class="form-label">Subcategoria:</label>
+            <select class="form-control" id="id_subcategoria" name="id_subcategoria">
+                <option value="">Selecione uma subcategoria</option>
+                {% for subcategoria in subcategorias %}
+                    <option value="{{ subcategoria.id }}" {% if subcategoria.id|stringformat:"s" == filtro_subcategoria %}selected{% endif %}>
+                        {{ subcategoria.nome }}
+                    </option>
+                {% endfor %}
+            </select>
+        </div>
+        <div class="col-12">
+            <button type="submit" class="btn btn-primary"><i class="fas fa-search"></i> Gerar Relatório</button>
+            <a href="{% url 'relatorio' %}" class="btn btn-outline-secondary" style="background-color: white; color: black;"><i class="fas fa-eraser"></i> Limpar Filtros</a>
+        </div>
+    </form>
+    <div class="table-responsive">
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th class="text-center">Data</th>
+                    <th class="text-center">Valor</th>
+                    <th class="text-center">Conta</th>
+                    <th class="text-center">Categoria</th>
+                    <th class="text-center">Subcategoria</th>
+                    <th class="text-center">Forma de Pagamento</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for despesa in despesas %}
+                    <tr>
+                        <td class="text-center">{{ despesa.data |date:"d/m/Y" }}</td>
+                        <td class="text-center">{{ despesa.valor }}</td>
+                        <td class="text-center">{{ despesa.conta }}</td>
+                        <td class="text-center">{{ despesa.categoria }}</td>
+                        <td class="text-center">{{ despesa.subcategoria }}</td>
+                        <td class="text-center">{{ despesa.forma_pagamento }}</td>
+                    </tr>
+                {% empty %}
+                    <tr>
+                        <td colspan="6" class="text-center">Nenhuma despesa encontrada.</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    <div class="d-flex justify-content-between align-items-center">
+        <a href="{% url 'index' %}" class="btn btn-secondary py-2"><i class="fas fa-arrow-left"></i> Voltar</a>
+        <nav aria-label="Page navigation example">
+            <ul class="pagination">
+                {% if page_obj.has_previous %}
+                    <li class="page-item"><a class="page-link" href="?page=1">&laquo; Primeira</a></li>
+                    <li class="page-item"><a class="page-link" href="?page={{ page_obj.previous_page_number }}">Anterior</a></li>
+                {% endif %}
+                <li class="page-item active"><a class="page-link">Página {{ page_obj.number }} de {{ page_obj.paginator.num_pages }}</a></li>
+                {% if page_obj.has_next %}
+                    <li class="page-item"><a class="page-link" href="?page={{ page_obj.next_page_number }}">Próxima</a></li>
+                    <li class="page-item"><a class="page-link" href="?page={{ page_obj.paginator.num_pages }}">Última &raquo;</a></li>
+                {% endif %}
+            </ul>
+        </nav>
+    </div>
+</div>
+{% endblock %}
+
+
+{% block extra_js %}
+    <script type="text/javascript">
+        // Configuração AJAX para adicionar CSRF token em solicitações POST
+        $.ajaxSetup({
+            beforeSend: function (xhr, settings) {
+                if (!/^(GET|HEAD|OPTIONS|TRACE)$/.test(settings.type) && !this.crossDomain) {
+                    xhr.setRequestHeader("X-CSRFToken", "{{ csrf_token }}");
+                }
+            }
+        });
+
+        // AJAX para carregar subcategorias com base na categoria selecionada
+        $(document).ready(function () {
+            $('#id_categoria').change(function () {
+                var categoriaId = $(this).val();
+                var url = '{% url "subcategorias_por_categoria_relatorio" %}';
+                if (categoriaId) {
+                    $.ajax({
+                        url: url,
+                        data: {'categoria': categoriaId},
+                        success: function (data) {
+                            $('#id_subcategoria').html(data);
+                        }
+                    });
+                } else {
+                    $('#id_subcategoria').html('<option value="">---------</option>');
+                }
+            });
+        });
+
+        $(document).ready(function () {
+    function updateSubcategorias() {
+        var categoriaId = $('#id_categoria').val();
+        var url = '{% url "subcategorias_por_categoria_relatorio" %}';
+        if (categoriaId) {
+            $.ajax({
+                url: url,
+                data: {'categoria': categoriaId},
+                success: function (data) {
+                    $('#id_subcategoria').html(data);
+                }
+            });
+        } else {
+            $('#id_subcategoria').html('<option value="">---------</option>');
+        }
+    }
+
+    // Atualizar subcategorias ao mudar categoria
+    $('#id_categoria').change(updateSubcategorias);
+
+    // Atualizar subcategorias na carga da página se categoria já estiver selecionada
+    updateSubcategorias();
+});
+
+    </script>
+
+
+
+{% endblock %}
