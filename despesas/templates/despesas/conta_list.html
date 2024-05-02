@@ -3,90 +3,68 @@
 {% block title %}Lista de Contas{% endblock %}
 
 {% block content %}
-    <div class="container mt-4">
-        <h1>Lista de Contas</h1>
-
-        <a href="{% url 'index' %}" class="btn btn-secondary mb-3"><i class="fas fa-arrow-left"></i> Voltar
-        </a>
-
-        <div class="mb-3">
-            <form method="get" action="{% url 'conta-list' %}"
-                  class="d-flex justify-content-between align-items-center">
-                <div class="input-group w-75">
-                    <input type="text" class="form-control" placeholder="Pesquisar contas..." name="search"
-                           value="{{ request.GET.search }}">
-                    <button type="submit" class="btn btn-outline-secondary"><i class="fas fa-search"></i></button>
-                    <a href="{% url 'conta-list' %}" class="btn btn-outline-danger"><i class="fas fa-times"></i></a>
-                </div>
-                <a href="{% url 'conta-create' %}" class="btn btn-success ms-2"><i class="fas fa-plus"></i>
-                    Nova
-                    Conta</a>
-            </form>
-        </div>
-
-        {% if messages %}
-            <div class="mt-2">
-                {% for message in messages %}
-                    <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
-                        {{ message }}
-                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                    </div>
-                {% endfor %}
+    <div class="container mt-1">
+    <h1>Lista de Contas</h1>
+    <div class="mb-3">
+        <form method="get" action="{% url 'conta-list' %}"
+              class="d-flex justify-content-between align-items-center">
+            <div class="input-group w-75">
+                <input type="text" class="form-control" placeholder="Pesquisar contas..." name="search"
+                       value="{{ request.GET.search }}">
+                <button type="submit" class="btn btn-outline-secondary"><i class="fas fa-search"></i></button>
+                <a href="{% url 'conta-list' %}" class="btn btn-outline-danger"><i class="fas fa-times"></i></a>
             </div>
-        {% endif %}
-
-        <div class="table-responsive mt-3">
-            <table class="table table-striped">
-                <thead class="thead-dark">
-                <tr>
-                    <th class="text-center">Nome</th>
-                    <th class="text-center">Descrição</th>
-                    <th class="text-center">Ações</th>
-                </tr>
-                </thead>
-                <tbody>
-                {% for conta in object_list %}
-                    <tr>
-                        <td class="text-center">{{ conta.nome }}</td>
-                        <td>{{ conta.descricao }}</td>
-                        <td class="text-center">
-                            <a href="{% url 'conta-update' conta.id %}" class="btn btn-primary btn-sm"
-                               aria-label="Editar"><i class="fas fa-edit"></i></a>
-                            <a href="{% url 'conta-delete' conta.id %}" class="btn btn-danger btn-sm"
-                               aria-label="Deletar"><i class="fas fa-trash-alt"></i></a>
-                            <a href="{% url 'despesas-por-conta' conta.id %}?from=conta_list&conta_id={{ conta.id }}"
-                               class="btn btn-secondary btn-sm"
-                               aria-label="Ver Despesas"><i class="fas fa-list"></i></a>
-                        </td>
-                    </tr>
-                {% empty %}
-                    <tr>
-                        <td colspan="3" class="text-center">Nenhuma conta encontrada.</td>
-                    </tr>
-                {% endfor %}
-                </tbody>
-            </table>
-        </div>
-
-        <!-- Paginação -->
-        <div class="d-flex justify-content-center">
-            <nav>
-                <ul class="pagination">
-                    {% if page_obj.has_previous %}
-                        <li class="page-item"><a class="page-link" href="?page=1">&laquo; Primeira</a></li>
-                        <li class="page-item"><a class="page-link" href="?page={{ page_obj.previous_page_number }}">Anterior</a>
-                        </li>
-                    {% endif %}
-                    <li class="page-item active"><a class="page-link">Página {{ page_obj.number }}
-                        de {{ page_obj.paginator.num_pages }}</a></li>
-                    {% if page_obj.has_next %}
-                        <li class="page-item"><a class="page-link"
-                                                 href="?page={{ page_obj.next_page_number }}">Próxima</a></li>
-                        <li class="page-item"><a class="page-link" href="?page={{ page_obj.paginator.num_pages }}">Última
-                            &raquo;</a></li>
-                    {% endif %}
-                </ul>
-            </nav>
-        </div>
+            <a href="{% url 'conta-create' %}" class="btn btn-success ms-2"><i class="fas fa-plus"></i>
+                Nova
+                Conta</a>
+        </form>
     </div>
+
+    {% if messages %}
+        <div class="mt-2">
+            {% for message in messages %}
+                <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+                    {{ message }}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+            {% endfor %}
+        </div>
+    {% endif %}
+
+    <div class="table-responsive mt-3">
+        <table class="table table-striped">
+            <thead class="thead-dark">
+            <tr>
+                <th class="text-center">Nome</th>
+                <th class="text-center">Descrição</th>
+                <th class="text-center">Ações</th>
+            </tr>
+            </thead>
+            <tbody>
+            {% for conta in object_list %}
+                <tr>
+                    <td class="text-center">{{ conta.nome }}</td>
+                    <td>{{ conta.descricao }}</td>
+                    <td class="text-center">
+                        <a href="{% url 'conta-update' conta.id %}" class="btn btn-primary btn-sm"
+                           aria-label="Editar"><i class="fas fa-edit"></i></a>
+                        <a href="{% url 'conta-delete' conta.id %}" class="btn btn-danger btn-sm"
+                           aria-label="Deletar"><i class="fas fa-trash-alt"></i></a>
+                        <a href="{% url 'despesas-por-conta' conta.id %}?from=conta_list&conta_id={{ conta.id }}"
+                           class="btn btn-secondary btn-sm"
+                           aria-label="Ver Despesas"><i class="fas fa-list"></i></a>
+                    </td>
+                </tr>
+            {% empty %}
+                <tr>
+                    <td colspan="3" class="text-center">Nenhuma conta encontrada.</td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    <!-- Paginação -->
+    {% include 'pagination.html' %}
+</div>
 {% endblock %}

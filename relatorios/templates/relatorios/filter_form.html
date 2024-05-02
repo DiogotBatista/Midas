@@ -1,0 +1,58 @@
+{% block content %}
+
+<form id="reportForm" method="get" action="{% url 'relatorio' %}" class="row g-3">
+        <div class="col-md-4">
+            <label for="data_inicio" class="form-label">Data Início:</label>
+            <input type="date" class="form-control" id="data_inicio" name="data_inicio" value="{{ filtro_data_inicio }}">
+        </div>
+        <div class="col-md-4">
+            <label for="data_fim" class="form-label">Data Fim:</label>
+            <input type="date" class="form-control" id="data_fim" name="data_fim" value="{{ filtro_data_fim }}">
+        </div>
+        <div class="col-md-4">
+            <label for="id_conta" class="form-label">Conta:</label>
+            <select class="form-control" id="id_conta" name="id_conta">
+                <option value="">Selecione uma conta</option>
+                {% for conta in contas %}
+                    <option value="{{ conta.id }}" {% if conta.id|stringformat:"s" == filtro_conta %}selected{% endif %}>
+                        {{ conta.nome }}
+                    </option>
+                {% endfor %}
+            </select>
+        </div>
+        <div class="col-md-4">
+            <label for="id_categoria" class="form-label">Categoria:</label>
+            <select class="form-control" id="id_categoria" name="id_categoria">
+                <option value="">Selecione uma categoria</option>
+                {% for categoria in categorias %}
+                    <option value="{{ categoria.id }}" {% if categoria.id|stringformat:"s" == filtro_categoria %}selected{% endif %}>
+                        {{ categoria.nome }}
+                    </option>
+                {% endfor %}
+            </select>
+        </div>
+        <div class="col-md-4">
+            <label for="id_subcategoria" class="form-label">Subcategoria:</label>
+            <select class="form-control" id="id_subcategoria" name="id_subcategoria">
+                <option value="">Selecione uma subcategoria</option>
+                {% for subcategoria in subcategorias %}
+                    <option value="{{ subcategoria.id }}" {% if subcategoria.id|stringformat:"s" == filtro_subcategoria %}selected{% endif %}>
+                        {{ subcategoria.nome }}
+                    </option>
+                {% endfor %}
+            </select>
+        </div>
+        <div class="col-md-4">
+            <label for="id_forma_pagamento" class="form-label">Forma de Pagamento:</label>
+            <select class="form-control" id="id_forma_pagamento" name="id_forma_pagamento">
+                <option value="">Selecione uma fomra de pagamento</option>
+                {% for formaPagamento in formas_pagamento %}
+                    <option value="{{ formaPagamento.id }}" {% if formaPagamento.id|stringformat:"s" == filtro_forma_pagamento %}selected{% endif %}>
+                        {{ formaPagamento.nome }}
+                    </option>
+                {% endfor %}
+            </select>
+        </div>
+
+
+{% endblock %}
