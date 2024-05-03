@@ -19,7 +19,7 @@ class RelatorioListView(ListView):
     model = Despesa
     template_name = 'relatorios/relatorios.html'
     context_object_name = 'despesas'
-    paginate_by = 20
+    paginate_by = 25
 
     def get_queryset(self):
         queryset = Despesa.objects.filter(usuario=self.request.user)
@@ -67,7 +67,8 @@ class RelatorioListView(ListView):
         context['filtro_data_fim'] = self.request.GET.get('data_fim', '')
         context['filtro_descricao'] = self.request.GET.get('id_descricao', '')
         total = self.get_queryset().aggregate(total=Sum('valor'))['total'] or 0
-        context['total_despesas'] = 'R$ {:.2f}'.format(total).replace('.', ',')
+        context['total_despesas'] = f"R$ {total:,.2f}".replace(",", "X").replace(".", ",").replace("X", ".")
+
         return context
 
 
@@ -210,9 +211,9 @@ def GenerateExcelReport(request):
         'Valor': [despesa.valor if despesa.valor else 0 for despesa in despesas],  # Assumindo 0 se o valor for nulo
         'Categoria': [despesa.categoria.nome if despesa.categoria else 'N/A' for despesa in despesas],
         'Subcategoria': [despesa.subcategoria.nome if despesa.subcategoria else 'N/A' for despesa in despesas],
-        'Forma de Pagamento': [despesa.forma_pagamento.nome if despesa.forma_pagamento else 'N/A' for despesa in
+        'Forma de Pagamento': [despesa.forma_pagamento.nome if despesa.forma_pagamento else 'Não informado' for despesa in
                                despesas],
-        'Descrição': [despesa.descricao if despesa.descricao else 'Não informado' for despesa in despesas],
+        'Descrição': [despesa.descricao if despesa.descricao else ' ' for despesa in despesas],
     }
 
     df = pd.DataFrame(data)

@@ -85,7 +85,6 @@ class Despesa(models.Model):
     def __str__(self):
         return f"{self.valor} - {self.data}"
 
-
 class CartaoCredito(models.Model):
     usuario = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     conta = models.ForeignKey(Conta, on_delete=models.CASCADE)

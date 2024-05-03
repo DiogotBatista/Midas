@@ -23,7 +23,7 @@ class DespesaListView(LoginRequiredMixin, ListView):
     model = Despesa
     template_name = 'despesas/despesa_list.html'
     context_object_name = 'despesas'
-    paginate_by = 10  # Define o número de despesas por página
+    paginate_by = 25  # Define o número de despesas por página
 
     def get_queryset(self):
         queryset = super().get_queryset().filter(usuario=self.request.user)
