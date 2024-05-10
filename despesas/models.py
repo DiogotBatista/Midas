@@ -69,6 +69,12 @@ class FormaPagamento(models.Model):
         return self.nome
 
 class Despesa(models.Model):
+    # TIPO_DESPESA_CHOICES = [
+    #     ('regular', 'Regular'),
+    #     ('parcelada', 'Parcelada'),
+    #     ('cheque_predatado', 'Cheque Predatado'),
+    # ]
+
     usuario = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     conta = models.ForeignKey(Conta, on_delete=models.CASCADE)
     valor = MoneyField(max_digits=10, decimal_places=2, default_currency='BRL')
@@ -77,13 +83,18 @@ class Despesa(models.Model):
     categoria = models.ForeignKey(Categoria, on_delete=models.CASCADE, null=True)
     subcategoria = models.ForeignKey(SubCategoria, on_delete=models.CASCADE, null=True)
     descricao = models.TextField(null=True, blank=True)
+    # tipo_despesa = models.CharField(max_length=16, choices=TIPO_DESPESA_CHOICES, default='regular')
+    # parcela_atual = models.IntegerField(default=1, null=True, blank=True)
+    # total_parcelas = models.IntegerField(default=1, null=True, blank=True)
+    # data_vencimento = models.DateField(null=True, blank=True)
+    # pago = models.BooleanField(default=False, verbose_name='Pago?')
 
     class Meta:
         ordering = ['-data']
         verbose_name_plural = 'Despesas'
 
     def __str__(self):
-        return f"{self.valor} - {self.data}"
+        return f"{self.valor} - {self.data} - {self.tipo_despesa}"
 
 class CartaoCredito(models.Model):
     usuario = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
@@ -103,6 +114,7 @@ class PagamentoParcelado(models.Model):
     conta = models.ForeignKey(Conta, on_delete=models.CASCADE)
     cartao_credito = models.ForeignKey(CartaoCredito, on_delete=models.CASCADE)
     categoria = models.ForeignKey(Categoria, on_delete=models.SET_NULL, null=True, blank=True)
+    subcategoria = models.ForeignKey(SubCategoria, on_delete=models.CASCADE, null=True)
     valor_total = MoneyField(max_digits=10, decimal_places=2, default_currency='BRL')
     numero_parcelas = models.IntegerField()
     parcela_atual = models.IntegerField()

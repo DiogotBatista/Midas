@@ -33,7 +33,7 @@
 
         .jumbotron {
             position: relative;
-            background: url({% static 'images/finance-background.png' %}) no-repeat center center;
+            background: url({% static 'despesas/images/finance-background.png' %}) no-repeat center center;
             background-size: cover;
             color: #fff;
             padding: 100px 25px;
@@ -160,7 +160,7 @@
                             <div class="card-body">
                                 <h5 class="card-title">Dashboards</h5>
                                 <p class="card-text">Visualize suas informações financeiras.</p>
-                                <a href='{% url 'em_construcao' %}' class="btn btn-success">Explorar</a>
+                                <a href='{% url 'dashboard:despesa-dashboard' %}' class="btn btn-success">Explorar</a>
                             </div>
                         </div>
                     </div>

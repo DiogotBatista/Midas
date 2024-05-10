@@ -47,13 +47,10 @@ class ChequeAdmin(admin.ModelAdmin):
     list_filter = ('data_emissao', 'pre_datado')
 
 
-admin.site.register(Conta, ContaAdmin)
+
 admin.site.register(Categoria, CategoriaAdmin)
 admin.site.register(SubCategoria, SubCategoriaAdmin)
-admin.site.register(Despesa, DespesaAdmin)
-admin.site.register(CartaoCredito, CartaoCreditoAdmin)
 admin.site.register(PagamentoParcelado, PagamentoParceladoAdmin)
-admin.site.register(Cheque, ChequeAdmin)
 admin.site.register(FormaPagamento, FormasPagamentoAdmin)
 
 admin.site.site_header = "MIDAS - Administração"

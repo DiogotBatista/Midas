@@ -2,8 +2,48 @@
 {% block title %}{% if object %}Editar Despesa {% else %}Criar Despesa{% endif %}{% endblock %}
 
 {% block content %}
+        <style>
+        #display {
+            font-size: 1.5rem; /* Tamanho da fonte do display */
+            text-align: right; /* Alinhamento do texto para a direita */
+            margin-bottom: 20px; /* Espaço abaixo do display */
+        }
+
+        .button-panel button {
+            width: 23%; /* Largura dos botões para preencher a linha */
+            margin: 0.5%; /* Espaçamento entre os botões */
+            font-size: 1.2rem; /* Tamanho da fonte dos botões */
+            padding: 15px 0; /* Espaçamento interno para aumentar a área de clique */
+        }
+
+        .modal-body {
+            padding: 20px; /* Mais espaço dentro do corpo do modal */
+        }
+
+        .calc-button.btn-light {
+            background-color: #f8f9fa; /* Cor de fundo para botões numéricos */
+            color: #333; /* Cor do texto para botões numéricos */
+        }
+
+        .calc-button.btn-danger, .calc-button.btn-success {
+            color: white; /* Cor do texto para botões de operações e igual */
+        }
+
+        .button-panel button:hover {
+            background-color: #ececec; /* Cor de fundo ao passar o mouse */
+        }
+
+        .button-panel button:active {
+            background-color: #ddd; /* Cor de fundo ao clicar */
+        }
+    </style>
     <div class="container mt-1">
+        <div class="d-flex justify-content-between align-items-center mb-4">
             <h1 class="mb-4">{% if object %}Editar{% else %}Criar{% endif %} Despesa</h1>
+                    <!-- Botão para abrir o modal da Calculadora -->
+                <button type="button" class="btn btn-outline-dark" data-bs-toggle="modal"data-bs-target="#calculadoraModal"><i class="fas fa-calculator"></i>
+                </button>
+        </div>
             {% if messages %}
             <div class="mt-2">
                 {% for message in messages %}
@@ -34,6 +74,7 @@
                 {% endfor %}
 
             </div>
+            <div class="mb-4">
             <button type="submit" class="btn btn-success"><i class="fas fa-save"></i> Salvar</button>
             {% if not object %}
             <button type="submit" name="save_and_add_another" class="btn btn-primary"><i class="fas fa-plus"></i> Salvar e adicionar outra
@@ -41,7 +82,56 @@
             {% endif %}
             <a href="{% if request.GET.next %}{{ request.GET.next }}{% else %}{% url 'despesa-list' %}{% endif %}"
                class="btn btn-secondary"><i class="fas fa-times"></i> Cancelar</a>
+            </div>
+
         </form>
+    </div>
+
+        <!-- Modal da Calculadora -->
+    <div class="modal fade" id="calculadoraModal" tabindex="-1" aria-labelledby="calculadoraModalLabel"
+         aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="calculadoraModalLabel">Calculadora</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <!-- Display da Calculadora -->
+                    <input type="text" id="display" class="form-control mb-2" disabled>
+
+                    <!-- Botões da Calculadora -->
+                        <div class="button-panel">
+                            <button class="btn btn-warning calc-button" onclick="pressOperator('C')">C</button>
+                            <button class="btn btn-light calc-button" onclick="pressNumber('(')">(</button>
+                            <button class="btn btn-light calc-button" onclick="pressNumber(')')">)</button>
+                            <button class="btn btn-warning calc-button" onclick="backspace()">Back</button>
+                            <br>
+                            <button class="btn btn-light calc-button" onclick="pressNumber('7')">7</button>
+                            <button class="btn btn-light calc-button" onclick="pressNumber('8')">8</button>
+                            <button class="btn btn-light calc-button" onclick="pressNumber('9')">9</button>
+                            <button class="btn btn-danger calc-button" onclick="pressOperator('*')">x</button>
+
+                            <br>
+                            <button class="btn btn-light calc-button" onclick="pressNumber('4')">4</button>
+                            <button class="btn btn-light calc-button" onclick="pressNumber('5')">5</button>
+                            <button class="btn btn-light calc-button" onclick="pressNumber('6')">6</button>
+                            <button class="btn btn-danger calc-button" onclick="pressOperator('-')">-</button>
+                            <br>
+                            <button class="btn btn-light calc-button" onclick="pressNumber('1')">1</button>
+                            <button class="btn btn-light calc-button" onclick="pressNumber('2')">2</button>
+                            <button class="btn btn-light calc-button" onclick="pressNumber('3')">3</button>
+                            <button class="btn btn-danger calc-button" onclick="pressOperator('+')">+</button>
+                            <br>
+                            <button class="btn btn-light calc-button" onclick="pressNumber('0')">0</button>
+                            <button class="btn btn-light calc-button" onclick="pressNumber(',')">,</button>
+                            <button class="btn btn-success calc-button" onclick="calculateResult()">=</button>
+                            <button class="btn btn-danger calc-button" onclick="pressOperator('/')">/</button>
+                        </div>
+
+                </div>
+            </div>
+        </div>
     </div>
 {% endblock %}
 
@@ -94,9 +184,74 @@
                 });
             }, false);
         })();
+
+        var expression = ''; // Para manter a expressão a ser calculada
+        var display = document.getElementById('display'); // Elemento de exibição
+
+        function pressNumber(num) {
+            expression += num;
+            document.getElementById('display').value = expression;
+        }
+
+        function pressOperator(op) {
+            if (op === 'C') {
+                expression = '';
+            } else {
+                expression += ' ' + op + ' ';
+            }
+            display.value = expression;
+        }
+
+        function calculateResult() {
+            try {
+                var validExpression = expression.replace(/,/g, '.');
+                var result = eval(validExpression );
+                display.value = result;
+                expression = result.toString().replace(/\./g, ','); // Reset expression to result
+            } catch (e) {
+                display.value = 'Error';
+                expression = '';
+            }
+        }
+
+        function backspace() {
+        if (expression.length > 0) {
+            // Remove o último caractere da expressão
+            expression = expression.slice(0, -1);
+            display.value = expression;
+            }
+        }
+
+        // Função para lidar com entradas do teclado
+        function handleKeyboardInput(e) {
+            var key = e.key;
+            if ((key >= '0' && key <= '9') || key === ',') { // Números e ponto
+                pressNumber(key);
+            } else if (key === '+' || key === '-' || key === '*' || key === '/') {
+                pressOperator(key);
+            } else if (key === 'Enter' || key === '=') {
+                calculateResult();
+            } else if (key === 'Escape' || key === 'c') { // 'Esc' ou 'c' para limpar
+                pressOperator('C');
+            } else if (key === 'Backspace') {
+                backspace();
+            } else if (key === 'Delete') {
+                expression = '';
+                display.value = expression;
+            } else if (key === ' ') {
+                // Ignorar a barra de espaço
+            } else {
+                console.log('Tecla não suportada: ' + key);
+            }
+        }
+
+        // Adicionando o ouvinte de evento ao documento
+        document.addEventListener('keydown', handleKeyboardInput);
+
+        $('#calculadoraModal').on('shown.bs.modal', function () {
+            display.focus();
+        });
     </script>
-
-
 
 {% endblock %}
 

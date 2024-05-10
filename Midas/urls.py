@@ -19,5 +19,6 @@ urlpatterns = [
     path('logout/', LogoutView.as_view(next_page='index'), name='logout'),
     path('em_construcao/', EmConstrucaoView.as_view(), name='em_construcao'),
     path('relatorios/', include('relatorios.urls')),
+    path('dashboard/', include('dashboard.urls')),
 
 ]

@@ -23,6 +23,7 @@ class RelatorioListView(ListView):
 
     def get_queryset(self):
         queryset = Despesa.objects.filter(usuario=self.request.user)
+        self.filtros_aplicados = False
         id_conta = self.request.GET.get('id_conta')
         id_categoria = self.request.GET.get('id_categoria')
         id_subcategoria = self.request.GET.get('id_subcategoria')
@@ -30,6 +31,12 @@ class RelatorioListView(ListView):
         id_descricao = self.request.GET.get('id_descricao')
         data_inicio = self.request.GET.get('data_inicio')
         data_fim = self.request.GET.get('data_fim')
+
+        for field in ['id_conta', 'id_categoria', 'id_subcategoria', 'id_forma_pagamento', 'id_descricao', 'data_inicio', 'data_fim']:
+            value = self.request.GET.get(field)
+            if value:
+                self.filtros_aplicados = True
+                break
 
         if data_inicio:
             data_inicio = parse_date(data_inicio)
@@ -54,6 +61,7 @@ class RelatorioListView(ListView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
+        context['filtros_aplicados'] = self.filtros_aplicados
         user = self.request.user
         context['contas'] = Conta.objects.filter(usuario=user)
         context['categorias'] = Categoria.objects.filter(Q(usuario=user) | Q(padrao=True))
@@ -156,7 +164,7 @@ class GeneratePDFReport(View):
 
         # Footer
         # elements.append(Spacer(1, 20))
-        footer_text = f"Relatório gerado por midas.dbsistemas.com.br em {timezone.now().strftime('%d/%m/%Y %H:%M:%S')}."
+        footer_text = f"Relatório gerado por midas.dbsistemas.com.br em {timezone.localtime().strftime('%d/%m/%Y %H:%M:%S')}."
         elements.append(Paragraph(footer_text, styles['Footer']))
 
         # # Adicionar total como parágrafo
@@ -236,9 +244,12 @@ def GenerateExcelReport(request):
 
 
 
+
 def subcategorias_por_categoria_relatorio(request):
     user = request.user  # Assume que o usuário está autenticado
     categoria_id = request.GET.get('categoria')
+    if not categoria_id:
+        return HttpResponse('<option value="">Selecione uma categoria primeiro</option>')
     subcategorias = SubCategoria.objects.filter(
         Q(padrao=True) | Q(usuario=user),  # Argumentos de filtro Q antes de qualquer argumento posicional
         categoria_id=categoria_id  # Argumentos posicionais ou outros filtros
